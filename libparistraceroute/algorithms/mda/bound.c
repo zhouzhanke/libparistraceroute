@@ -148,6 +148,7 @@ static double node_confidence(double graph_confidence, size_t max_branch)
     double ret;
     double power = 1.0 / max_branch;
     
+     // graph_confidence这里已经从成功覆盖率转化为失败覆盖率，比如0.95->0.05
     ret = pow((1 - graph_confidence), power); 
     return 1 - ret;
 } 
@@ -210,7 +211,9 @@ bound_t * bound_create(double confidence, size_t max_interfaces, size_t max_bran
     // Allocate and populate bound_t structure
     if (!(bound = malloc(sizeof(bound_t)))) goto ERR_BOUND_MALLOC;
 
+    // 合并confidence和mac branch
     bound->confidence = node_confidence(confidence, max_branch);
+
     bound->max_n      = max_interfaces;
 
     // Create parrallel tables to store stopping points and associated
@@ -366,4 +369,3 @@ int main(int argc, const char * argv[]) {
     bound_free(bound);
     return 0;
 }
-
